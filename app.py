@@ -9,15 +9,14 @@ app = Flask(__name__)
 def index():
     if request.method == 'POST':
         file = request.files['image']
-        input_image = Image.open(file.stream).convert("RGBA")
-        output_image = remove(input_image)
-
-        img_io = io.BytesIO()
-        output_image.save(img_io, 'PNG')
-        img_io.seek(0)
-        return send_file(img_io, mimetype='image/png')
-
+        if file:
+            input_image = Image.open(file.stream).convert("RGBA")
+            output = remove(input_image)
+            byte_io = io.BytesIO()
+            output.save(byte_io, 'PNG')
+            byte_io.seek(0)
+            return send_file(byte_io, mimetype='image/png', as_attachment=True, download_name='no-bg.png')
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080)
